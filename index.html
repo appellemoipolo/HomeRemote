@@ -3,15 +3,22 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title>HomeRemote</title>
+		<link rel="stylesheet" href="bower_components/foundation/css/normalize.css">
 		<link rel="stylesheet" href="bower_components/foundation/css/foundation.min.css" />
 		<link rel="stylesheet" href="css/main.css" />
 		<script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+		<script type="text/javascript" src="bower_components/foundation/js/foundation.min.js"></script>
+		<script type="text/javascript" src="bower_components/foundation/js/foundation/foundation.topbar.js"></script>
 		<script type="text/javascript" src="bower_components/handlebars/handlebars.min.js"></script>
 		<script type="text/javascript" src="bower_components/britejs/dist/brite-snapshot.min.js"></script>
 		<script type="text/javascript" src="js/main.js"></script>
 	</head>
 	<body>
-		<h1>My remote</h1>
-		<p>My new remote project</p>
+		<div id="pageBody"></div>
+		
+		
+		<script>
+			$(document).foundation();
+		</script>
 	</body>
 </html>
