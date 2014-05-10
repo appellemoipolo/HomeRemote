@@ -1,7 +1,11 @@
 brite.viewDefaultConfig.loadTmpl = true;
 brite.viewDefaultConfig.loadCss = true;
 
-Handlebars.templates = Handlebars.templates || {};  
+$(document).ready(function(){
+	brite.display("MainView","#pageBody");
+});
+
+Handlebars.templates = Handlebars.templates || {};
 function render(templateName,data){
 	var tmpl = Handlebars.templates[templateName];
 	if (!tmpl){
@@ -11,6 +15,12 @@ function render(templateName,data){
 	return tmpl(data);
 }
 
-$(document).ready(function(){
-	brite.display("MainView","#pageBody");
-});
+var main = main || {};
+(function() {
+
+	main.scenesLists = [
+		{id: "1", name: "Cuisine"},
+		{id: "2", name: "Salon"}
+	]
+
+})();
