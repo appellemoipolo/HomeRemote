@@ -1,3 +1,11 @@
 .Scene{
-  
+
+}
+
+.Scene button.on{
+  background-color: red;
+}
+
+.Scene button.off{
+  background-color: blue;
 }

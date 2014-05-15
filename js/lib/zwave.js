@@ -8,29 +8,60 @@ var zwaveModule = zwaveModule || {};
     this._serverAddress = __serverAddress;
   };
 
-  Zwave.prototype.setValue = function (__deviceId, __instance, __commandClass, __value){
+  Zwave.prototype.set = function (__deviceId, __instance, __commandClass, __value, __callback){
     $.ajax({
       url: 'http://' + this._serverAddress + '/ZWaveAPI/Run/devices[' + __deviceId + '].instances[' + __instance + '].commandClasses[' + __commandClass + '].Set(' + __value + ')',
       type: 'get'
     })
     .done(function(data, textStatus, jqXHR) {
       logAjaxCallbacks(data, textStatus, jqXHR);
+      if (__callback) {
+        return __callback(data);
+      }
     })
     .fail(function(data, textStatus, jqXHR) {
       logAjaxCallbacks(data, textStatus, jqXHR);
+      if (__callback) {
+        return __callback(data);
+      }
     });
   };
 
-  Zwave.prototype.update = function (__deviceId, __instance, __commandClass) {
+  Zwave.prototype.update = function (__deviceId, __instance, __commandClass, __callback) {
     $.ajax({
-      url: 'http://' + this.__serverAddress + '/ZWaveAPI/Run/devices[' + __deviceId + '].instances[' + __instance + '].commandClasses[' + __commandClass + '].Get()',
+      url: 'http://' + this._serverAddress + '/ZWaveAPI/Run/devices[' + __deviceId + '].instances[' + __instance + '].commandClasses[' + __commandClass + '].Get()',
       type: 'get'
     })
     .done(function(data, textStatus, jqXHR) {
       logAjaxCallbacks(data, textStatus, jqXHR);
+      if (__callback) {
+        return __callback(data);
+      }
     })
     .fail(function(data, textStatus, jqXHR) {
       logAjaxCallbacks(data, textStatus, jqXHR);
+      if (__callback) {
+        return __callback(data);
+      }
+    });
+  };
+
+  Zwave.prototype.get = function (__deviceId, __instance, __commandClass, __callback) {
+    $.ajax({
+      url: 'http://' + this._serverAddress + '/ZWaveAPI/Run/devices[' + __deviceId + '].instances[' + __instance + '].commandClasses[' + __commandClass + ']',
+      type: 'get'
+    })
+    .done(function(data, textStatus, jqXHR) {
+      logAjaxCallbacks(data, textStatus, jqXHR);
+      if (__callback) {
+        return __callback(data);
+      }
+    })
+    .fail(function(data, textStatus, jqXHR) {
+      logAjaxCallbacks(data, textStatus, jqXHR);
+      if (__callback) {
+        return __callback(data);
+      }
     });
   };
 
@@ -39,21 +70,8 @@ var zwaveModule = zwaveModule || {};
   };
 
   zwaveModule.Zwave = Zwave;
-
 })();
 
-// Zwave.prototype.update = function (deviceId, instance, commandClass, callback){
-//   request.get('http://'+ this.address +'/ZWaveAPI/Run/devices[' + deviceId + '].instances['+instance+'].commandClasses['+commandClass+'].Get()', function (err, response, body){
-//
-//     if(err){
-//       callback(err);
-//     } else {
-//       callback(null, JSON.parse(body), response);
-//     }
-//
-//   });
-// };
-//
 // Zwave.prototype.getDevices = function (callback){
 //   request.get('http://' + this.address + '/ZWaveAPI/Run/devices', function (err, response, body){
 //

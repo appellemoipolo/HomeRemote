@@ -1,8 +1,8 @@
 (function() {
-  brite.registerView("Scene",{
+  brite.registerView('Scene',{
 
     create: function(){
-      return render("tmpl-Scene", {ScenesList:main.scenesLists});
+      return render('tmpl-Scene', {ScenesList:main.scenarios});
     },
 
     postDisplay: function(){
