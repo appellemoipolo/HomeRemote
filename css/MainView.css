@@ -1,3 +1,46 @@
 .MainView {
 
 }
+
+.MainView header {
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #c8c8c8;
+}
+
+.MainView header h1 {
+  text-align: center;
+  margin: 0;
+}
+
+.MainView .MainView-content{
+  margin: 5px;
+}
+
+.MainView footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #f8f8f8;
+  border-top: 1px solid #c8c8c8;
+}
+
+.MainView footer nav {
+  text-align: center;
+}
+
+.MainView footer nav ul {
+  margin: 0;
+  padding: 0;
+}
+
+.MainView footer nav li {
+  text-align: center;
+  display: inline-block;
+  width: 32%;
+}
+
+.MainView footer a {
+  color: #7c7b83;
+  text-decoration: none;
+}

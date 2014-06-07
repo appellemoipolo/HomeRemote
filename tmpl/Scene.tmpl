@@ -1,8 +1,10 @@
 <script id="tmpl-Scene" type="text/html">
-<section class="Scene">
-<h2>Scènes</h2>
-{{#each ScenesList}}
-<button id="{{name}}">{{name}}</button>
-{{/each}}
-</section>
+  <div class="Scene">
+    <section>
+      <h2>Scènes</h2>
+      {{#each ScenesList}}
+      <button id="{{name}}"><i class="fa fa-lightbulb-o fa-4x"></i><span>{{name}}</span></button>
+      {{/each}}
+    </section>
+  </div>
 </script>

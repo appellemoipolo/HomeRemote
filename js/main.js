@@ -22,7 +22,8 @@ var main = main || {};
 
 	main.scenarios = [
 		{name: 'Bar', deviceId: '44', deviceInstance: '0', deviceMaximmalValue: '30', deviceCommand: '0x26'},
-		{name: 'Cuisine', deviceId: '6', deviceInstance: '0', deviceMaximmalValue: '30', deviceCommand: '0x26'}
+		{name: 'Cuisine', deviceId: '6', deviceInstance: '0', deviceMaximmalValue: '30', deviceCommand: '0x26'},
+		{name: 'Frigo', deviceId: '7', deviceInstance: '0', deviceMaximmalValue: '30', deviceCommand: '0x26'}
 	];
 
 })();

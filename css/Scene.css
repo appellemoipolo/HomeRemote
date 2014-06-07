@@ -1,11 +1,32 @@
-.Scene{
+.Scene {
 
 }
 
-.Scene button.on{
-  background-color: red;
+.Scene button.on {
+  background-color: #46ca5e;
 }
 
-.Scene button.off{
-  background-color: blue;
+.Scene button.off {
+  background-color: #8E8E93;
+}
+
+.Scene section button {
+  height: 100px;
+  width: 100px;
+  background-color: #8E8E93;
+  border: 0;
+  position: relative;
+}
+
+.Scene section button > span {
+  position: absolute;
+  left: 5px;
+  bottom: 5px;
+  color: white;
+}
+
+.Scene section button > i {
+  position: relative;
+  top: -10px;
+  color: white;
 }
