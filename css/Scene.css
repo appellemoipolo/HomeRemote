@@ -10,12 +10,18 @@
   background-color: #8E8E93;
 }
 
+.Scene section .groupActivator {
+  float: left;
+}
+
 .Scene section button {
-  height: 100px;
-  width: 100px;
+  height: 120px;
+  width: 120px;
   background-color: #8E8E93;
   border: 0;
   position: relative;
+  margin: 2px 2px 2px 2px;
+  float:left;
 }
 
 .Scene section button > span {
@@ -23,10 +29,24 @@
   left: 5px;
   bottom: 5px;
   color: white;
+
 }
 
 .Scene section button > i {
   position: relative;
   top: -10px;
   color: white;
+}
+
+.Scene section > section button {
+  height: 58px;
+  width: 58px;
+  background-color: #8E8E93;
+  border: 0;
+  position: relative;
+  margin: 2px 2px 2px 2px;
+}
+
+.Scene section > section button {
+  font-size: smaller;
 }

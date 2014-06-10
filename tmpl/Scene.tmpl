@@ -1,10 +1,15 @@
 <script id="tmpl-Scene" type="text/html">
   <div class="Scene">
+    {{#each ScenesList}}
     <section>
-      <h2>Scènes</h2>
-      {{#each ScenesList}}
-      <button id="{{name}}"><i class="fa fa-lightbulb-o fa-4x"></i><span>{{name}}</span></button>
-      {{/each}}
+      <button class="groupActivator" id="{{name}}"><i class="fa fa-cutlery fa-4x"></i><span>{{name}}</span></button>
+      <section>
+        {{#each devices}}
+        <button id="{{name}}"><i class="fa fa-lightbulb-o fa-2x"></i><span>{{name}}</span></button>
+        {{/each}}
+      </section>
+      <div class="clearfix"></div>
     </section>
+    {{/each}}
   </div>
 </script>
