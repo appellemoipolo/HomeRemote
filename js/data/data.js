@@ -10,12 +10,12 @@ var main = main || {};
   // ];
 
   main.devices = [
-    {name: 'Bar', deviceId: '44', deviceInstance: '0', deviceMaximmalValue: '30', deviceCommand: '0x26'},
-    {name: 'Plan', deviceId: '6', deviceInstance: '0', deviceMaximmalValue: '30', deviceCommand: '0x26'},
-    {name: 'Frigo', deviceId: '7', deviceInstance: '0', deviceMaximmalValue: '30', deviceCommand: '0x26'},
-    {name: 'Mur', deviceId: '44', deviceInstance: '0', deviceMaximmalValue: '30', deviceCommand: '0x26'},
-    {name: 'Bulle', deviceId: '6', deviceInstance: '0', deviceMaximmalValue: '30', deviceCommand: '0x26'},
-    {name: 'Poutre', deviceId: '7', deviceInstance: '0', deviceMaximmalValue: '30', deviceCommand: '0x26'}
+    {name: 'Bar', id: '44', instance: '0', maximalValue: '30', commandClass: '0x26'},
+    {name: 'Plan', id: '6', instance: '0', maximalValue: '30', commandClass: '0x26'},
+    {name: 'Frigo', id: '7', instance: '0', maximalValue: '30', commandClass: '0x26'},
+    {name: 'Mur', id: '44', instance: '0', maximalValue: '30', commandClass: '0x26'},
+    {name: 'Bulle', id: '6', instance: '0', maximalValue: '30', commandClass: '0x26'},
+    {name: 'Poutre', id: '7', instance: '0', maximalValue: '30', commandClass: '0x26'}
   ];
 
   main.scenarios = [
