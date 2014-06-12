@@ -1,18 +1,20 @@
-(function() {
-  brite.registerView('Scene',{
+(function () {
+    brite.registerView('Scene', {
 
-    create: function(){
-      return render('tmpl-Scene', {ScenesList:main.scenarios});
-    },
+        create: function () {
+            return render('tmpl-Scene', {
+                ScenesList: main.scenarios
+            });
+        },
 
-    postDisplay: function(){
-      var view = this;
+        postDisplay: function () {
+            var view = this;
 
 
-    },
+        },
 
-    events:{
+        events: {
 
-    }
-  });
+        }
+    });
 })();
