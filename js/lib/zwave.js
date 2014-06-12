@@ -50,6 +50,120 @@ var zwaveModule = zwaveModule || {};
     return result.promise();
   };
 
+  Zwave.prototype.setUpdateAndGetDevice = function(__device, __value) {
+    var result = $.Deferred();
+    var self = this;
+
+    self.setDevice(__device, __value).done(function (__data, __textStatus, __jqXHR){
+      self.updateAndGetDevice(__device).done(function(__data, __textStatus, __jqXHR) {
+        result.resolve(__data, __textStatus, __jqXHR);
+      }).fail(function(__data, __textStatus, __jqXHR){
+        result.reject(__data, __textStatus, __jqXHR);
+      });
+    }).fail(function(__data, __textStatus, __jqXHR){
+      result.reject(__data, __textStatus, __jqXHR);
+    });
+
+    return result;
+  }
+
+  Zwave.prototype.toggleDevice = function (__device) {
+    var result = $.Deferred();
+    var self = this;
+
+    self.updateAndGetDevice(__device).done(function(__data, __textStatus, __jqXHR) {
+      var newValue = __device.maximalValue;
+
+      if (__data.data.level.value > 0) {
+        newValue = 0;
+      }
+
+      self.setUpdateAndGetDevice(__device, newValue).done(function(__data, __textStatus, __jqXHR) {
+        result.resolve(__data, __textStatus, __jqXHR);
+      }).fail(function(__data, __textStatus, __jqXHR){
+        result.reject(__data, __textStatus, __jqXHR);
+      });
+    }).fail(function(__data, __textStatus, __jqXHR){
+      result.reject(__data, __textStatus, __jqXHR);
+    });
+
+    return result;
+  };
+
+  Zwave.prototype.toggleScenario = function (__scenario) {
+    var result = $.Deferred();
+    var self = this;
+
+    if (!__scenario.hasOwnProperty('devices')) {
+      result.reject('Scenario without devices');
+    }
+
+    var scenarioDevices = __scenario.devices;
+
+    var devicesOn = [];
+    var devicesOff = [];
+
+    var devicesCheckedStatus = [];
+
+    for (var i = 0; i < scenarioDevices.length; i++) {
+      var deviceCheckedStatus = (function(__scenarioDevice) {
+        var deferredStatus = new $.Deferred();
+        if (__scenarioDevice.hasOwnProperty('name')) {
+          var device = main.devices.filter(function(__data){
+            return __data.name === __scenarioDevice.name;
+          })[0]; // Looking for the first device [0] having the good name
+
+          self.updateAndGetDevice(device).done(function(__data, __textStatus, __jqXHR){
+            if (__data.data.level.value > 0) {
+              devicesOn.push(device);
+            } else {
+              devicesOff.push(device);
+            }
+
+            deferredStatus.resolve();
+          }).fail(function(__data, __textStatus, __jqXHR){
+            result.reject(__data, __textStatus, __jqXHR);
+          });
+        }
+
+        return deferredStatus.promise();
+      }(scenarioDevices[i]));
+
+      devicesCheckedStatus.push(deviceCheckedStatus);
+    }
+
+    $.when.apply($, devicesCheckedStatus).then(function(){
+      var devicesToToggle = devicesOn;
+      var toggleToZero = true;
+
+      if(devicesOff.length > 0) {
+        devicesToToggle = devicesOff;
+        toggleToZero = false;
+      }
+
+      for (var i = 0; i < devicesToToggle.length; i++) {
+        var device = devicesToToggle[i];
+        var newValue = 0;
+
+        if (!toggleToZero) {
+          newValue = device.maximalValue;
+        }
+
+        self.setUpdateAndGetDevice(device, newValue).done(function(__data, __textStatus, __jqXHR) {
+          if (i < devicesToToggle.length - 1) {
+            result.notify(__data, __textStatus, __jqXHR);
+          } else {
+            result.resolve(__data, __textStatus, __jqXHR);
+          }
+        }).fail(function(__data, __textStatus, __jqXHR){
+          result.reject(__data, __textStatus, __jqXHR);
+        });
+      }
+    });
+
+    return result;
+  };
+
   function logAjaxCallbacks(__data, __textStatus, __jqXHR) {
     console.log('zwaveModule ajax callback\njqXHR: ' + JSON.stringify(__jqXHR) + '\nStatus: ' + __textStatus + '\nDone: ' + JSON.stringify(__data));
   };
