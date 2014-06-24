@@ -26,10 +26,10 @@
     });
 
     function toggleDevice(__deviceName) {
-        var zwave = new zwaveModule.Zwave(main.homeAutomationServerAddress);
+        var zwave = new zwaveModule.Core(main.homeAutomationServerAddress);
 
         var device = main.devices.filter(function (__data) {
-            return __data.name === __deviceName;
+            return __data.name() === __deviceName;
         })[0]; // Looking for the first device [0] having the good name
 
         zwave.toggleDevice(device).done(function (__data) {
@@ -38,27 +38,43 @@
             } else {
                 setButtonStatus(__deviceName, false);
             }
+
+            setButtonInBusyMode(__deviceName, false);
+        }).fail(function (__data) {
+            zwave.updateAndGetDevice(device);
+            setButtonInBusyMode(__deviceName, false);
+        }).progress(function (__data) {
+            setButtonInBusyMode(__deviceName, true);
         });
     }
 
     function toggleScenario(__scenarioName) {
-        var zwave = new zwaveModule.Zwave(main.homeAutomationServerAddress);
+        var zwave = new zwaveModule.Core(main.homeAutomationServerAddress);
 
         var scenario = main.scenarios.filter(function (__data) {
             return __data.name === __scenarioName;
         })[0]; // Looking for the first scenario [0] having the good name
 
         zwave.toggleScenario(scenario).done(function (__data) {
-            if (__data.data.level.value > 0) {
-                setButtonStatus(__scenarioName, true);
-            } else {
-                setButtonStatus(__scenarioName, false);
-            }
+            console.log(__data.data.level.value);
+            //            if (__data.data.level.value > 0) {
+            //                setButtonStatus(__scenarioName, true);
+            //            } else {
+            //                setButtonStatus(__scenarioName, false);
+            //            }
         });
     }
 
-    function setButtonStatus(__buttonId, __value) {
-        if (__value) {
+    function setButtonInBusyMode(__buttonId, __bool) {
+        if (__bool) {
+            $('#' + __buttonId).addClass('animation-busy');
+        } else {
+            $('#' + __buttonId).removeClass('animation-busy');
+        }
+    }
+
+    function setButtonStatus(__buttonId, __bool) {
+        if (__bool) {
             $('#' + __buttonId).addClass('on');
             $('#' + __buttonId).removeClass('off');
         } else {

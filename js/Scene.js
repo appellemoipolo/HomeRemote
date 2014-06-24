@@ -3,14 +3,12 @@
 
         create: function () {
             return render('tmpl-Scene', {
-                ScenesList: main.scenarios
+                ScenesList: main.zwaveZones
             });
         },
 
         postDisplay: function () {
             var view = this;
-
-
         },
 
         events: {

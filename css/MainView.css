@@ -1,46 +1,51 @@
-.MainView {
-
+.MainView {} .MainView header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #c8c8c8;
+    height: 44px;
+    line-height: 44px;
+    text-align: center;
+    z-index: 10;
 }
-
-.MainView header {
-  background-color: #f8f8f8;
-  border-bottom: 1px solid #c8c8c8;
-}
-
 .MainView header h1 {
-  text-align: center;
-  margin: 0;
+    margin: 0;
+    text-align: center;
+    font-weight: 500;
 }
-
-.MainView .MainView-content{
-  margin: 5px;
+.MainView .container {
+    margin-top: 47px;
+    margin-bottom: 50px;
 }
-
+.MainView .MainView-content {
+    margin: 2px;
+}
 .MainView footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: #f8f8f8;
-  border-top: 1px solid #c8c8c8;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #f8f8f8;
+    border-top: 1px solid #c8c8c8;
+    z-index: 10;
+    height: 47px;
+    font-size: smaller;
 }
-
 .MainView footer nav {
-  text-align: center;
+    text-align: center;
 }
-
 .MainView footer nav ul {
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
 }
-
 .MainView footer nav li {
-  text-align: center;
-  display: inline-block;
-  width: 32%;
+    text-align: center;
+    display: inline-block;
+    width: 32%;
 }
-
 .MainView footer a {
-  color: #7c7b83;
-  text-decoration: none;
+    color: #7c7b83;
+    text-decoration: none;
 }

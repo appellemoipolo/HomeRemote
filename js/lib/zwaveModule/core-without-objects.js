@@ -2,38 +2,31 @@ var zwaveModule = zwaveModule || {};
 
 (function () {
 
-    function Zwave(__serverAddress) {
+    function Core(__serverAddress) {
         this._serverAddress = __serverAddress;
     }
 
-    Zwave.prototype.getDevice = function (__device) {
-        return $.ajax({
-            url: 'http://' + this._serverAddress + '/ZWaveAPI/Run/devices[' + __device.id + '].instances[' + __device.instance + '].commandClasses[' + __device.commandClass + ']',
-            type: 'get'
-        }).always(function (__data, __textStatus, __jqXHR) {
-            logAjaxCallbacks(__data, __textStatus, __jqXHR);
-        });
+    //    var fibaroAutomaticMovingTimer = http: 10.0.1.191:8083/ZWaveAPI/Run/devices%5B20%5D.instances%5B0%5D.commandClasses%5B112%5D.data%5B10%5D.val.value 
+
+    Core.prototype.getDevice = function (__device) {
+        var url = 'http://' + this._serverAddress + '/ZWaveAPI/Run/devices[' + __device.id + '].instances[' + __device.instance + '].commandClasses[' + __device.commandClass + ']';
+
+        return ajaxGet(url);
     };
 
-    Zwave.prototype.setDevice = function (__device, __value) {
-        return $.ajax({
-            url: 'http://' + this._serverAddress + '/ZWaveAPI/Run/devices[' + __device.id + '].instances[' + __device.instance + '].commandClasses[' + __device.commandClass + '].Set(' + __value + ')',
-            type: 'get'
-        }).always(function (__data, __textStatus, __jqXHR) {
-            logAjaxCallbacks(__data, __textStatus, __jqXHR);
-        });
+    Core.prototype.setDevice = function (__device, __value) {
+        var url = 'http://' + this._serverAddress + '/ZWaveAPI/Run/devices[' + __device.id + '].instances[' + __device.instance + '].commandClasses[' + __device.commandClass + '].Set(' + __value + ')';
+
+        return ajaxGet(url);
     };
 
-    Zwave.prototype.updateDevice = function (__device) {
-        return $.ajax({
-            url: 'http://' + this._serverAddress + '/ZWaveAPI/Run/devices[' + __device.id + '].instances[' + __device.instance + '].commandClasses[' + __device.commandClass + '].Get()',
-            type: 'get'
-        }).always(function (__data, __textStatus, __jqXHR) {
-            logAjaxCallbacks(__data, __textStatus, __jqXHR);
-        });
+    Core.prototype.updateDevice = function (__device) {
+        var url = 'http://' + this._serverAddress + '/ZWaveAPI/Run/devices[' + __device.id + '].instances[' + __device.instance + '].commandClasses[' + __device.commandClass + '].Get()';
+        // .instances%5B0%5D.commandClasses%5B112%5D.data%5B10%5D.val.value
+        return ajaxGet(url);
     };
 
-    Zwave.prototype.updateAndGetDevice = function (__device) {
+    Core.prototype.updateAndGetDevice = function (__device) {
         var result = $.Deferred();
         var self = this;
 
@@ -50,28 +43,60 @@ var zwaveModule = zwaveModule || {};
         return result.promise();
     };
 
-    Zwave.prototype.setUpdateAndGetDevice = function (__device, __value) {
+    Core.prototype.updateAndGetDevices = function (__devices) {
         var result = $.Deferred();
         var self = this;
 
+        result.progress('Updating and getting devices');
+
+        for (var i = 0; i < __devices.length; i++) {
+            if (__devices[i].hasOwnProperty('id')) {
+
+            }
+        }
+
+        return result.promise();
+    }
+
+    Core.prototype.setUpdateAndGetDevice = function (__device, __value) {
+        var result = $.Deferred();
+        var self = this;
+        var MAXIMUM_REQUEST_NUMBER = 2;
+        var currentRequestNumber = 0;
+
         self.setDevice(__device, __value).done(function (__data, __textStatus, __jqXHR) {
-            self.updateAndGetDevice(__device).done(function (__data, __textStatus, __jqXHR) {
-                result.resolve(__data, __textStatus, __jqXHR);
-            }).fail(function (__data, __textStatus, __jqXHR) {
-                result.reject(__data, __textStatus, __jqXHR);
-            });
+            result.notify(__data, __textStatus, __jqXHR);
+
+            (function tryRequest() {
+                setTimeout(function () {
+                    self.updateAndGetDevice(__device).done(function (__data, __textStatus, __jqXHR) {
+                        if (__data.data.level.value == __value) {
+                            result.resolve(__data, __textStatus, __jqXHR);
+                        } else if (currentRequestNumber == MAXIMUM_REQUEST_NUMBER) {
+                            result.reject(__data, __textStatus, __jqXHR);
+                        } else {
+                            result.notify(__data, __textStatus, __jqXHR);
+                            currentRequestNumber += 1;
+                            tryRequest();
+                        }
+                    }).fail(function (__data, __textStatus, __jqXHR) {
+                        result.reject(__data, __textStatus, __jqXHR);
+                    });
+                }, __device.dimmingTime);
+            })();
+
         }).fail(function (__data, __textStatus, __jqXHR) {
             result.reject(__data, __textStatus, __jqXHR);
         });
 
-        return result;
+        return result.promise();
     };
 
-    Zwave.prototype.toggleDevice = function (__device) {
+    Core.prototype.toggleDevice = function (__device) {
         var result = $.Deferred();
         var self = this;
 
-        self.updateAndGetDevice(__device).done(function (__data, __textStatus, __jqXHR) {
+        $.when(self.updateAndGetDevice(__device)).done(function (__data, __textStatus, __jqXHR) {
             var newValue = __device.maximalValue;
 
             if (__data.data.level.value > 0) {
@@ -82,15 +107,35 @@ var zwaveModule = zwaveModule || {};
                 result.resolve(__data, __textStatus, __jqXHR);
             }).fail(function (__data, __textStatus, __jqXHR) {
                 result.reject(__data, __textStatus, __jqXHR);
+            }).progress(function (__data, __textStatus, __jqXHR) {
+                result.notify(__data, __textStatus, __jqXHR);
             });
         }).fail(function (__data, __textStatus, __jqXHR) {
             result.reject(__data, __textStatus, __jqXHR);
         });
 
-        return result;
+        return result.promise();
     };
 
-    Zwave.prototype.toggleScenario = function (__scenario) {
+    Core.prototype.toggleDevicesGroup = function (__group) {
+        var result = $.Deferred();
+        var self = this;
+
+        if (!__group.hasOwnProperty('devices')) {
+            result.reject('Scenario without devices');
+        }
+
+        var devicesWithOnStatus = [];
+        var devicesWithOffStatus = [];
+
+        var devicesWithCheckedStatus = [];
+
+        result.progress('Toggling devices');
+
+        return result.promise();
+    };
+
+    Core.prototype.toggleScenario = function (__scenario) {
         var result = $.Deferred();
         var self = this;
 
@@ -164,11 +209,27 @@ var zwaveModule = zwaveModule || {};
         return result;
     };
 
-    function logAjaxCallbacks(__data, __textStatus, __jqXHR) {
-        console.log('zwaveModule ajax callback\njqXHR: ' + JSON.stringify(__jqXHR) + '\nStatus: ' + __textStatus + '\nDone: ' + JSON.stringify(__data));
+    function getDeviceFromDevicesGroup(__deviceName) {
+        return main.devices.filter(function (__data) {
+            return __data.name === __scenarioDevice.name;
+        })[0]; // Looking for the first device [0] having the good name
     }
 
-    zwaveModule.Zwave = Zwave;
+    function ajaxGet(__url) {
+        return $.ajax({
+            url: __url,
+            type: 'get'
+        }).always(function (__data, __textStatus, __jqXHR) {
+            logAjaxCallbacks(__url, __data, __textStatus, __jqXHR);
+        });
+    }
+
+    function logAjaxCallbacks(__url, __data, __textStatus, __jqXHR) {
+        //        console.log('zwaveModule ajax callback\nurl: ' + encodeURI(__url) + '\njqXHR: ' + JSON.stringify(__jqXHR) + '\nStatus: ' + __textStatus + '\nDone: ' + JSON.stringify(__data));
+        //console.log('zwaveModule ajax callback\nurl: ' + encodeURI(__url));
+    }
+
+    zwaveModule.Core = Core;
 })();
 
 

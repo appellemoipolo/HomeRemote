@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html>
-    
+
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <title>HomeRemote</title>
     <link rel="stylesheet" href="bower_components/normalize.css/normalize.css" />
     <link rel="stylesheet" href="bower_components/fontawesome/css/font-awesome.min.css" />
     <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/animations.css" />
     <link rel="stylesheet" href="css/ugly.css" />
 </head>
 
@@ -17,9 +21,19 @@
     <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript" src="bower_components/handlebars/handlebars.min.js"></script>
     <script type="text/javascript" src="bower_components/britejs/dist/brite-snapshot.min.js"></script>
-    <script type="text/javascript" src="js/lib/zwave.js"></script>
+    <script type="application/javascript" src="bower_components/fastclick/lib/fastclick.js"></script>
+    <script type="text/javascript" src="js/lib/zwaveModule/zone.js"></script>
+    <script type="text/javascript" src="js/lib/zwaveModule/core.js"></script>
+    <script type="text/javascript" src="js/lib/zwaveModule/device.js"></script>
     <script type="text/javascript" src="js/data/data.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            FastClick.attach(document.body);
+        });
+    </script>
+
 </body>
 
 </html>

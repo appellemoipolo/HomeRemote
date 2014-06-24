@@ -3,86 +3,42 @@ var main = main || {};
 
     main.homeAutomationServerAddress = '10.0.1.191:8083';
 
-    // main.scenarios = [
-    //   {name: 'Bar', deviceId: '44', deviceInstance: '0', deviceMaximmalValue: '30', deviceCommand: '0x26'},
-    //   {name: 'Cuisine', deviceId: '6', deviceInstance: '0', deviceMaximmalValue: '30', deviceCommand: '0x26'},
-    //   {name: 'Frigo', deviceId: '7', deviceInstance: '0', deviceMaximmalValue: '30', deviceCommand: '0x26'}
-    // ];
-
     main.devices = [
-        {
-            name: 'Bar',
-            id: '44',
-            instance: '0',
-            maximalValue: '30',
-            commandClass: '0x26'
-        },
-        {
-            name: 'Plan',
-            id: '6',
-            instance: '0',
-            maximalValue: '30',
-            commandClass: '0x26'
-        },
-        {
-            name: 'Frigo',
-            id: '7',
-            instance: '0',
-            maximalValue: '30',
-            commandClass: '0x26'
-        },
-        {
-            name: 'Mur',
-            id: '44',
-            instance: '0',
-            maximalValue: '30',
-            commandClass: '0x26'
-        },
-        {
-            name: 'Bulle',
-            id: '6',
-            instance: '0',
-            maximalValue: '30',
-            commandClass: '0x26'
-        },
-        {
-            name: 'Poutre',
-            id: '7',
-            instance: '0',
-            maximalValue: '30',
-            commandClass: '0x26'
-        }
-  ];
+        new zwaveModule.Device('Table', 'fa-lightbulb-o', '17', '0', '0x26', '30', 2000),
+        new zwaveModule.Device('Bulle', 'fa-lightbulb-o', '30', '0', '0x26', '30', 2000),
+        new zwaveModule.Device('TV', 'fa-lightbulb-o', '16', '0', '0x26', '30', 2000),
+        new zwaveModule.Device('Bar', 'fa-lightbulb-o', '44', '0', '0x26', '30', 2000),
+        new zwaveModule.Device('Indirect', 'fa-lightbulb-o', '6', '0', '0x26', '30', 2000),
+        new zwaveModule.Device('Ruban', 'fa-lightbulb-o', '9', '0', '0x26', '30', 2000),
+        new zwaveModule.Device('Frigo', 'fa-lightbulb-o', '7', '0', '0x26', '30', 2000),
+        new zwaveModule.Device('Terrasse', 'fa-lightbulb-o', '20', '0', '0x26', '30', 2000)
+    ];
 
-    main.scenarios = [
-        {
-            name: 'Cuisine',
-            devices: [
-                {
-                    name: 'Bar'
-                },
-                {
-                    name: 'Plan'
-                },
-                {
-                    name: 'Frigo'
-                },
-    ]
-        },
-        {
-            name: 'Salon',
-            devices: [
-                {
-                    name: 'Mur'
-                },
-                {
-                    name: 'Bulle'
-                },
-                {
-                    name: 'Poutre'
-                }
-    ]
-        }
-  ];
+    main.zwaveZones = [
+        new zwaveModule.Zone('Miam', 'fa-cutlery'),
+        new zwaveModule.Zone('Télé', 'fa-video-camera'),
+        new zwaveModule.Zone('Cuisine', 'fa-beer'),
+        new zwaveModule.Zone('Dehors', 'fa-sun-o')
+    ];
+
+    main.zwaveZones[0].devices([
+        main.devices[0],
+        main.devices[1]
+    ]);
+
+    main.zwaveZones[1].devices([
+       main.devices[2]
+    ]);
+
+    main.zwaveZones[2].devices([
+        main.devices[3],
+        main.devices[4],
+        main.devices[5],
+    ]);
+
+    main.zwaveZones[3].devices([
+        main.devices[6],
+        main.devices[7]
+    ]);
 
 })();

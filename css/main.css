@@ -1,8 +1,8 @@
-body{
-  background-color: #efeff4;
-  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+body {
+    background-color: #efblueeff4;
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    font-weight: 300;
 }
-
 .clearfix {
-  clear: both;
+    clear: both;
 }

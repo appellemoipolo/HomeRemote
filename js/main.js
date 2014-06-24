@@ -7,6 +7,14 @@ $(document).ready(function () {
 
 Handlebars.templates = Handlebars.templates || {};
 
+Handlebars.registerHelper('getName', function (__device) {
+    return __device.name();
+});
+
+Handlebars.registerHelper('getIcon', function (__device) {
+    return __device.icon();
+})
+
 function render(templateName, data) {
     var tmpl = Handlebars.templates[templateName];
     if (!tmpl) {
