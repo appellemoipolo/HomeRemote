@@ -46,11 +46,11 @@ var zwaveModule = zwaveModule || {};
         self.updateDevice(__device).done(function (__data, __textStatus, __jqXHR) {
             self.getDevice(__device).done(function (__data, __textStatus, __jqXHR) {
                 result.resolve(__data, __textStatus, __jqXHR);
-            }).fail(function (__data, __textStatus, __jqXHR) {
-                result.reject(__data, __textStatus, __jqXHR);
+            }).fail(function (__jqXHR, __textStatus, __errorThrown) {
+                result.reject(__jqXHR, __textStatus, __errorThrown);
             });
-        }).fail(function (__data, __textStatus, __jqXHR) {
-            result.reject(__data, __textStatus, __jqXHR);
+        }).fail(function (__jqXHR, __textStatus, __errorThrown) {
+            result.reject(__jqXHR, __textStatus, __errorThrown);
         });
 
         return result.promise();
@@ -60,7 +60,7 @@ var zwaveModule = zwaveModule || {};
         var result = $.Deferred();
         var self = this;
 
-        result.progress('Updating and getting devices');
+        result.notify('Updating and getting devices');
 
         for (var i = 0; i < __devices.length; i++) {
             if (__devices[i].hasOwnProperty('id')) {
@@ -92,14 +92,14 @@ var zwaveModule = zwaveModule || {};
                             currentRequestNumber += 1;
                             tryRequest();
                         }
-                    }).fail(function (__data, __textStatus, __jqXHR) {
-                        result.reject(__data, __textStatus, __jqXHR);
+                    }).fail(function (__jqXHR, __textStatus, __errorThrown) {
+                        result.reject(__jqXHR, __textStatus, __errorThrown);
                     });
                 }, __device.dimmingTime());
             })();
 
-        }).fail(function (__data, __textStatus, __jqXHR) {
-            result.reject(__data, __textStatus, __jqXHR);
+        }).fail(function (__jqXHR, __textStatus, __errorThrown) {
+            result.reject(__jqXHR, __textStatus, __errorThrown);
         });
 
         return result.promise();
@@ -117,14 +117,22 @@ var zwaveModule = zwaveModule || {};
             }
 
             self.setUpdateAndGetDevice(__device, newValue).done(function (__data, __textStatus, __jqXHR) {
+                console.log('toggleDevice.done');
+                console.log(__data);
+                console.log(__textStatus);
+                console.log(__jqXHR);
                 result.resolve(__data, __textStatus, __jqXHR);
-            }).fail(function (__data, __textStatus, __jqXHR) {
-                result.reject(__data, __textStatus, __jqXHR);
+            }).fail(function (__jqXHR, __textStatus, __errorThrown) {
+                result.reject(__jqXHR, __textStatus, __errorThrown);
             }).progress(function (__data, __textStatus, __jqXHR) {
+                console.log('toggleDevice.progress');
+                console.log(__data);
+                console.log(__textStatus);
+                console.log(__jqXHR);
                 result.notify(__data, __textStatus, __jqXHR);
             });
-        }).fail(function (__data, __textStatus, __jqXHR) {
-            result.reject(__data, __textStatus, __jqXHR);
+        }).fail(function (__jqXHR, __textStatus, __errorThrown) {
+            result.reject(__jqXHR, __textStatus, __errorThrown);
         });
 
         return result.promise();
@@ -134,61 +142,91 @@ var zwaveModule = zwaveModule || {};
         var result = $.Deferred();
         var self = this;
 
-        if (!__group.hasOwnProperty('devices')) {
-            result.reject('Scenario without devices');
-        }
-
         var devicesWithOnStatus = [];
         var devicesWithOffStatus = [];
 
         var devicesWithCheckedStatus = [];
 
-        result.progress('Toggling devices');
+        result.notify(__group);
+
+        for (var i = 0, l = __group.devices().length; i < l; i++) {
+            var deviceWithCheckingStatus = (function (__groupDevice) {
+                var deferredStatus = new $.Deferred();
+                self.updateAndGetDevice(__groupDevice).done(function (__data, __textStatus, __jqXHR) {
+                    if (__data.data.level.value > 0) {
+                        devicesWithOnStatus.push(__groupDevice);
+                    } else {
+                        devicesWithOffStatus.push(__groupDevice);
+                    }
+
+                    deferredStatus.resolve(__data, __textStatus, __jqXHR);
+                }).fail(function (__jqXHR, __textStatus, __errorThrown) {
+                    deferredStatus.reject(__jqXHR, __textStatus, __errorThrown);
+                });
+
+                return deferredStatus.promise();
+            }(__group.devices()[i])).done(function (__data, __textStatus, __jqXHR) {
+                result.notify(__data, __textStatus, __jqXHR);
+            }).fail(function (__jqXHR, __textStatus, __errorThrown) {
+                result.notify(__jqXHR, __textStatus, __errorThrown);
+            });
+
+            devicesWithCheckedStatus.push(deviceWithCheckingStatus);
+        }
+
+        var devicesUpdated = [];
+        var toggleToZero = true;
+
+        $.when.apply($, devicesWithCheckedStatus).then(function () {
+            var devicesToToggle = devicesWithOnStatus;
+
+            if (devicesWithOffStatus.length > 0) {
+                devicesToToggle = devicesWithOffStatus;
+                toggleToZero = false;
+            }
+
+            for (var i = 0, l = devicesToToggle.length; i < l; i++) {
+                var deviceUpdated = (function (__device) {
+                    var deferredStatus = new $.Deferred();
+
+                    var newValue = 0;
+
+                    if (!toggleToZero) {
+                        newValue = __device.maximalValue();
+                    }
+
+                    self.setUpdateAndGetDevice(__device, newValue).done(function (__data, __textStatus, __jqXHR) {
+                        deferredStatus.resolve(__data, __textStatus, __jqXHR);
+                    }).fail(function (__jqXHR, __textStatus, __errorThrown) {
+                        deferredStatus.reject(__jqXHR, __textStatus, __errorThrown);
+                    }).progress(function (__data, __textStatus, __jqXHR) {
+                        deferredStatus.notify(__data, __textStatus, __jqXHR);
+                    });
+
+                    return deferredStatus.promise();
+                })(devicesToToggle[i]).done(function (__data, __textStatus, __jqXHR) {
+                    result.notify(__data, __textStatus, __jqXHR);
+                }).fail(function (__jqXHR, __textStatus, __errorThrown) {
+                    result.notify(__jqXHR, __textStatus, __errorThrown);
+                });
+
+                devicesUpdated.push(deviceUpdated);
+            }
+
+            $.when.apply($, devicesUpdated).then(function () {
+                result.resolve(toggleToZero);
+            }).fail(function () {
+                result.reject();
+            });
+
+        }).fail(function () {
+            result.reject();
+        });
 
         return result.promise();
     };
 
     Core.prototype.toggleScenario = function (__scenario) {
-        var result = $.Deferred();
-        var self = this;
-
-        if (!__scenario.hasOwnProperty('devices')) {
-            result.reject('Scenario without devices');
-        }
-
-        var scenarioDevices = __scenario.devices;
-
-        var devicesOn = [];
-        var devicesOff = [];
-
-        var devicesCheckedStatus = [];
-
-        for (var i = 0; i < scenarioDevices.length; i++) {
-            var deviceCheckedStatus = (function (__scenarioDevice) {
-                var deferredStatus = new $.Deferred();
-                if (__scenarioDevice.hasOwnProperty('name')) {
-                    var device = main.devices.filter(function (__data) {
-                        return __data.name() === __scenarioDevice.name;
-                    })[0]; // Looking for the first device [0] having the good name
-
-                    self.updateAndGetDevice(device).done(function (__data, __textStatus, __jqXHR) {
-                        if (__data.data.level.value > 0) {
-                            devicesOn.push(device);
-                        } else {
-                            devicesOff.push(device);
-                        }
-
-                        deferredStatus.resolve();
-                    }).fail(function (__data, __textStatus, __jqXHR) {
-                        result.reject(__data, __textStatus, __jqXHR);
-                    });
-                }
-
-                return deferredStatus.promise();
-            }(scenarioDevices[i]));
-
-            devicesCheckedStatus.push(deviceCheckedStatus);
-        }
 
         $.when.apply($, devicesCheckedStatus).then(function () {
             var devicesToToggle = devicesOn;
@@ -222,12 +260,6 @@ var zwaveModule = zwaveModule || {};
         return result;
     };
 
-    function getDeviceFromDevicesGroup(__deviceName) {
-        return main.devices.filter(function (__data) {
-            return __data.name() === __scenarioDevice.name;
-        })[0]; // Looking for the first device [0] having the good name
-    }
-
     function ajaxGet(__url) {
         return $.ajax({
             url: __url,
@@ -238,7 +270,7 @@ var zwaveModule = zwaveModule || {};
     }
 
     function logAjaxCallbacks(__url, __data, __textStatus, __jqXHR) {
-        console.log('zwaveModule ajax callback\nurl: ' + encodeURI(__url) + '\njqXHR: ' + JSON.stringify(__jqXHR) + '\nStatus: ' + __textStatus + '\nDone: ' + JSON.stringify(__data));
+        //        console.log('zwaveModule ajax callback\nurl: ' + encodeURI(__url) + '\njqXHR: ' + JSON.stringify(__jqXHR) + '\nStatus: ' + __textStatus + '\nDone: ' + JSON.stringify(__data));
         //        console.log('zwaveModule ajax callback\nurl: ' + encodeURI(__url));
     }
 

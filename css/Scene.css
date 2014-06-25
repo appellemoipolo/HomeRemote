@@ -3,11 +3,14 @@
     color: white;
     box-shadow: none;
 }
+.Scene button.active {
+    -webkit-animation: animation-active 1000ms linear both;
+    animation: animation-active 1000ms linear both;
+}
 .Scene section {
     float: left;
-    min-width: 248px;
-    max-width: 248px;
-}
+    min-width:248px;
+    max-width:248px;}
 .Scene section .groupActivator {
     float: left;
 }
@@ -28,19 +31,21 @@
     left: 5px;
     bottom: 5px;
 }
+/*
 .Scene section button:active {
     background-color: blue;
     -webkit-animation: animation-active 1000ms linear both;
     animation: animation-active 1000ms linear both;
 }
+*/
+
 .Scene section button > i {
     position: relative;
     top: -10px;
 }
 .Scene section > section {
-    min-width: 124px;
-    max-width: 124px;
-}
+    min-width:124px;
+    max-width:124px;}
 .Scene section > section button {
     height: 58px;
     width: 58px;

@@ -15,6 +15,7 @@ var main = main || {};
     ];
 
     main.zwaveZones = [
+        new zwaveModule.Zone('Salon', 'fa-th'),
         new zwaveModule.Zone('Miam', 'fa-cutlery'),
         new zwaveModule.Zone('Télé', 'fa-video-camera'),
         new zwaveModule.Zone('Cuisine', 'fa-beer'),
@@ -23,20 +24,31 @@ var main = main || {};
 
     main.zwaveZones[0].devices([
         main.devices[0],
-        main.devices[1]
-    ]);
-
-    main.zwaveZones[1].devices([
-       main.devices[2]
-    ]);
-
-    main.zwaveZones[2].devices([
+        main.devices[1],
+        main.devices[2],
         main.devices[3],
         main.devices[4],
         main.devices[5],
+        main.devices[6],
+        main.devices[7]
+    ]);
+
+    main.zwaveZones[1].devices([
+        main.devices[0],
+        main.devices[1]
+    ]);
+
+    main.zwaveZones[2].devices([
+       main.devices[2]
     ]);
 
     main.zwaveZones[3].devices([
+        main.devices[3],
+        main.devices[4],
+        main.devices[5]
+    ]);
+
+    main.zwaveZones[4].devices([
         main.devices[6],
         main.devices[7]
     ]);

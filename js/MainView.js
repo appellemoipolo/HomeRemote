@@ -16,9 +16,11 @@
 
         events: {
             'click; section .groupActivator': function (__event) {
-                toggleScenario(__event.currentTarget.id);
+                setButtonClick(__event.currentTarget.id);
+                toggleGroup(__event.currentTarget.id);
             },
             'click; section > section button': function (__event) {
+                setButtonClick(__event.currentTarget.id);
                 toggleDevice(__event.currentTarget.id);
             }
         }
@@ -48,21 +50,44 @@
         });
     }
 
-    function toggleScenario(__scenarioName) {
+    function toggleGroup(__groupName) {
         var zwave = new zwaveModule.Core(main.homeAutomationServerAddress);
 
-        var scenario = main.scenarios.filter(function (__data) {
-            return __data.name === __scenarioName;
+        var group = main.zwaveZones.filter(function (__data) {
+            return __data.name() === __groupName;
         })[0]; // Looking for the first scenario [0] having the good name
 
-        zwave.toggleScenario(scenario).done(function (__data) {
-            console.log(__data.data.level.value);
-            //            if (__data.data.level.value > 0) {
-            //                setButtonStatus(__scenarioName, true);
-            //            } else {
-            //                setButtonStatus(__scenarioName, false);
-            //            }
+        zwave.toggleDevicesGroup(group).done(function (__data) {
+            console.log(__data);
+            setButtonStatus(__groupName, __data);
+
+            setButtonInBusyMode(__groupName, false);
+        }).fail(function (__jqXHR, __textStatus, __errorThrown) {
+
+        }).progress(function (__data, __textStatus, __jqXHR) {
+            console.log(__data, __textStatus, __jqXHR);
+            if (__data.hasOwnProperty('data') && __data.data.hasOwnProperty('name')) {
+                var device = main.devices.filter(function (__deviceData) {
+                    // name: "devices.20.instances.0.commandClasses.38.data"
+                    return __data.data.name.split('.')[1] === __deviceData.id();
+                })[0];
+
+                if (__data.data.level.value > 0) {
+                    setButtonStatus(device.name(), true);
+                } else {
+                    setButtonStatus(device.name(), true);
+                }
+            }
+
+            setButtonInBusyMode(__groupName, true);
         });
+    }
+
+    function setButtonClick(__buttonId) {
+        $('#' + __buttonId).addClass('active');
+        setTimeout(function () {
+            $('#' + __buttonId).removeClass('active');
+        }, 1000);
     }
 
     function setButtonInBusyMode(__buttonId, __bool) {
