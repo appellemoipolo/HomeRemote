@@ -65,7 +65,7 @@
         }).fail(function (__jqXHR, __textStatus, __errorThrown) {
 
         }).progress(function (__data, __textStatus, __jqXHR) {
-            console.log(__data, __textStatus, __jqXHR);
+            //            console.log(__data, __textStatus, __jqXHR);
             if (__data.hasOwnProperty('data') && __data.data.hasOwnProperty('name')) {
                 var device = main.devices.filter(function (__deviceData) {
                     // name: "devices.20.instances.0.commandClasses.38.data"

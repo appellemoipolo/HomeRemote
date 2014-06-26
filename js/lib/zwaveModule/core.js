@@ -117,18 +117,18 @@ var zwaveModule = zwaveModule || {};
             }
 
             self.setUpdateAndGetDevice(__device, newValue).done(function (__data, __textStatus, __jqXHR) {
-                console.log('toggleDevice.done');
-                console.log(__data);
-                console.log(__textStatus);
-                console.log(__jqXHR);
+                //                console.log('toggleDevice.done');
+                //                console.log(__data);
+                //                console.log(__textStatus);
+                //                console.log(__jqXHR);
                 result.resolve(__data, __textStatus, __jqXHR);
             }).fail(function (__jqXHR, __textStatus, __errorThrown) {
                 result.reject(__jqXHR, __textStatus, __errorThrown);
             }).progress(function (__data, __textStatus, __jqXHR) {
-                console.log('toggleDevice.progress');
-                console.log(__data);
-                console.log(__textStatus);
-                console.log(__jqXHR);
+                //                console.log('toggleDevice.progress');
+                //                console.log(__data);
+                //                console.log(__textStatus);
+                //                console.log(__jqXHR);
                 result.notify(__data, __textStatus, __jqXHR);
             });
         }).fail(function (__jqXHR, __textStatus, __errorThrown) {
@@ -214,7 +214,7 @@ var zwaveModule = zwaveModule || {};
             }
 
             $.when.apply($, devicesUpdated).then(function () {
-                result.resolve(toggleToZero);
+                result.resolve(!toggleToZero);
             }).fail(function () {
                 result.reject();
             });
@@ -224,40 +224,6 @@ var zwaveModule = zwaveModule || {};
         });
 
         return result.promise();
-    };
-
-    Core.prototype.toggleScenario = function (__scenario) {
-
-        $.when.apply($, devicesCheckedStatus).then(function () {
-            var devicesToToggle = devicesOn;
-            var toggleToZero = true;
-
-            if (devicesOff.length > 0) {
-                devicesToToggle = devicesOff;
-                toggleToZero = false;
-            }
-
-            for (var i = 0; i < devicesToToggle.length; i++) {
-                var device = devicesToToggle[i];
-                var newValue = 0;
-
-                if (!toggleToZero) {
-                    newValue = device.maximalValue();
-                }
-
-                self.setUpdateAndGetDevice(device, newValue).done(function (__data, __textStatus, __jqXHR) {
-                    if (i < devicesToToggle.length - 1) {
-                        result.notify(__data, __textStatus, __jqXHR);
-                    } else {
-                        result.resolve(__data, __textStatus, __jqXHR);
-                    }
-                }).fail(function (__data, __textStatus, __jqXHR) {
-                    result.reject(__data, __textStatus, __jqXHR);
-                });
-            }
-        });
-
-        return result;
     };
 
     function ajaxGet(__url) {
