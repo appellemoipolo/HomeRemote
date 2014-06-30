@@ -10,22 +10,49 @@
         postDisplay: function () {
             var view = this;
 
+            initDevices();
             // Display the two sub-views
             brite.display('Scene', view.$el.find('.MainView-content'));
         },
 
         events: {
             'click; section .groupActivator': function (__event) {
-                setButtonClick(__event.currentTarget.id);
-                toggleGroup(__event.currentTarget.id);
+                setButtonClick(__event.currentTarget.name);
+                toggleGroup(__event.currentTarget.name);
             },
             'click; section > section button': function (__event) {
-                setButtonClick(__event.currentTarget.id);
-                toggleDevice(__event.currentTarget.id);
+                setButtonClick(__event.currentTarget.name);
+                toggleDevice(__event.currentTarget.name);
             }
         }
 
     });
+
+    function initDevices() {
+        var zwave = new zwaveModule.Core(main.homeAutomationServerAddress);
+
+        zwave.updateAndGetDevices(main.devices).done(function (__data) {
+            console.log('Done');
+            console.log(__data);
+        }).fail(function (__jqXHR, __textStatus, __errorThrown) {
+            console.log('Fail');
+            console.log(__jqXHR, __textStatus, __errorThrown);
+        }).progress(function (__data, __textStatus, __jqXHR) {
+            console.log('Progress');
+            console.log(__data, __textStatus, __jqXHR);
+
+            var device = main.devices.filter(function (__deviceData) {
+                // name: "devices.20.instances.0.commandClasses.38.data"
+                return __data.data.name.split('.')[1] === __deviceData.id();
+            })[0];
+
+            if (__data.data.level.value > 0) {
+                setButtonStatus(device.name(), true);
+            } else {
+                setButtonStatus(device.name(), false);
+            }
+        });
+    }
 
     function toggleDevice(__deviceName) {
         var zwave = new zwaveModule.Core(main.homeAutomationServerAddress);
@@ -57,15 +84,13 @@
             return __data.name() === __groupName;
         })[0]; // Looking for the first scenario [0] having the good name
 
-        zwave.toggleDevicesGroup(group).done(function (__data) {
-            console.log(__data);
+        zwave.toggleDevicesGroup(group, [main.devices[8]]).done(function (__data) {
             setButtonStatus(__groupName, __data);
 
             setButtonInBusyMode(__groupName, false);
         }).fail(function (__jqXHR, __textStatus, __errorThrown) {
 
         }).progress(function (__data, __textStatus, __jqXHR) {
-            //            console.log(__data, __textStatus, __jqXHR);
             if (__data.hasOwnProperty('data') && __data.data.hasOwnProperty('name')) {
                 var device = main.devices.filter(function (__deviceData) {
                     // name: "devices.20.instances.0.commandClasses.38.data"
@@ -75,7 +100,7 @@
                 if (__data.data.level.value > 0) {
                     setButtonStatus(device.name(), true);
                 } else {
-                    setButtonStatus(device.name(), true);
+                    setButtonStatus(device.name(), false);
                 }
             }
 
@@ -84,27 +109,27 @@
     }
 
     function setButtonClick(__buttonId) {
-        $('#' + __buttonId).addClass('active');
+        $('[name=' + __buttonId + ']').addClass('active');
         setTimeout(function () {
-            $('#' + __buttonId).removeClass('active');
+            $('[name=' + __buttonId + ']').removeClass('active');
         }, 1000);
     }
 
     function setButtonInBusyMode(__buttonId, __bool) {
         if (__bool) {
-            $('#' + __buttonId).addClass('animation-busy');
+            $('[name=' + __buttonId + ']').addClass('animation-busy');
         } else {
-            $('#' + __buttonId).removeClass('animation-busy');
+            $('[name=' + __buttonId + ']').removeClass('animation-busy');
         }
     }
 
     function setButtonStatus(__buttonId, __bool) {
         if (__bool) {
-            $('#' + __buttonId).addClass('on');
-            $('#' + __buttonId).removeClass('off');
+            $('[name=' + __buttonId + ']').addClass('on');
+            $('[name=' + __buttonId + ']').removeClass('off');
         } else {
-            $('#' + __buttonId).addClass('off');
-            $('#' + __buttonId).removeClass('on');
+            $('[name=' + __buttonId + ']').addClass('off');
+            $('[name=' + __buttonId + ']').removeClass('on');
         }
     }
 

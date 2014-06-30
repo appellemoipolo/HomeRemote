@@ -2,13 +2,14 @@ var zwaveModule = zwaveModule || {};
 
 (function () {
 
-    function Device(__name, __icon, __id, __instance, __commandClass, __maximalValue, __dimmingTime) {
+    function Device(__name, __icon, __id, __instance, __commandClass, __defaultOnValue, __togglableInGroup, __dimmingTime) {
         this.name(__name);
         this.icon(__icon);
         this.id(__id);
         this.instance(__instance);
         this.commandClass(__commandClass);
-        this.maximalValue(__maximalValue);
+        this.defaultOnValue(__defaultOnValue);
+        this.togglableInGroup(__togglableInGroup);
         this.dimmingTime(__dimmingTime);
     }
 
@@ -44,11 +45,11 @@ var zwaveModule = zwaveModule || {};
         }
     }
 
-    Device.prototype.maximalValue = function (__value) {
+    Device.prototype.defaultOnValue = function (__value) {
         if (typeof __value === 'undefined') {
-            return this._maximalValue;
+            return this._defaultOnValue;
         } else {
-            this._maximalValue = __value;
+            this._defaultOnValue = __value;
         }
     }
 
@@ -57,6 +58,14 @@ var zwaveModule = zwaveModule || {};
             return this._commandClass;
         } else {
             this._commandClass = __value;
+        }
+    }
+
+    Device.prototype.togglableInGroup = function (__value) {
+        if (typeof __value === 'undefined') {
+            return this._togglableInGroup;
+        } else {
+            this._togglableInGroup = __value;
         }
     }
 

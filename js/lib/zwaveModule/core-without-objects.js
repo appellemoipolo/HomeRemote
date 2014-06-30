@@ -97,7 +97,7 @@ var zwaveModule = zwaveModule || {};
         var self = this;
 
         $.when(self.updateAndGetDevice(__device)).done(function (__data, __textStatus, __jqXHR) {
-            var newValue = __device.maximalValue;
+            var newValue = __device.defaultOnValue;
 
             if (__data.data.level.value > 0) {
                 newValue = 0;
@@ -191,7 +191,7 @@ var zwaveModule = zwaveModule || {};
                 var newValue = 0;
 
                 if (!toggleToZero) {
-                    newValue = device.maximalValue;
+                    newValue = device.defaultOnValue;
                 }
 
                 self.setUpdateAndGetDevice(device, newValue).done(function (__data, __textStatus, __jqXHR) {

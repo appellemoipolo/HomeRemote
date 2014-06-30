@@ -60,12 +60,20 @@ var zwaveModule = zwaveModule || {};
         var result = $.Deferred();
         var self = this;
 
-        result.notify('Updating and getting devices');
+        for (var i = 0, l = __devices.length; i < l; i++) {
+            (function (__device, __i) {
+                self.updateAndGetDevice(__device).done(function (__data, __textStatus, __jqXHR) {
+                    result.notify(__data, __textStatus, __jqXHR);
 
-        for (var i = 0; i < __devices.length; i++) {
-            if (__devices[i].hasOwnProperty('id')) {
+                    console.log(__i);
 
-            }
+                    if (__i == l - 1) {
+                        result.resolve('Jobs done');
+                    }
+                }).fail(function (__jqXHR, __textStatus, __errorThrown) {
+                    result.reject(__jqXHR, __textStatus, __errorThrown);
+                });
+            }(__devices[i], i));
         }
 
         return result.promise();
@@ -95,7 +103,7 @@ var zwaveModule = zwaveModule || {};
                     }).fail(function (__jqXHR, __textStatus, __errorThrown) {
                         result.reject(__jqXHR, __textStatus, __errorThrown);
                     });
-                }, __device.dimmingTime());
+                }, __device.dimmingTime() * (__device.defaultOnValue() / 100)); // Formula because of fibaro dimming way
             })();
 
         }).fail(function (__jqXHR, __textStatus, __errorThrown) {
@@ -110,7 +118,7 @@ var zwaveModule = zwaveModule || {};
         var self = this;
 
         $.when(self.updateAndGetDevice(__device)).done(function (__data, __textStatus, __jqXHR) {
-            var newValue = __device.maximalValue();
+            var newValue = __device.defaultOnValue();
 
             if (__data.data.level.value > 0) {
                 newValue = 0;
@@ -147,9 +155,17 @@ var zwaveModule = zwaveModule || {};
 
         var devicesWithCheckedStatus = [];
 
+        var devicesToToggle = [];
+
         result.notify(__group);
 
         for (var i = 0, l = __group.devices().length; i < l; i++) {
+            if (__group.devices()[i].togglableInGroup()) {
+                devicesToToggle.push(__group.devices()[i]);
+            }
+        }
+
+        for (var i = 0, l = devicesToToggle.length; i < l; i++) {
             var deviceWithCheckingStatus = (function (__groupDevice) {
                 var deferredStatus = new $.Deferred();
                 self.updateAndGetDevice(__groupDevice).done(function (__data, __textStatus, __jqXHR) {
@@ -165,7 +181,7 @@ var zwaveModule = zwaveModule || {};
                 });
 
                 return deferredStatus.promise();
-            }(__group.devices()[i])).done(function (__data, __textStatus, __jqXHR) {
+            }(devicesToToggle[i])).done(function (__data, __textStatus, __jqXHR) {
                 result.notify(__data, __textStatus, __jqXHR);
             }).fail(function (__jqXHR, __textStatus, __errorThrown) {
                 result.notify(__jqXHR, __textStatus, __errorThrown);
@@ -178,7 +194,7 @@ var zwaveModule = zwaveModule || {};
         var toggleToZero = true;
 
         $.when.apply($, devicesWithCheckedStatus).then(function () {
-            var devicesToToggle = devicesWithOnStatus;
+            devicesToToggle = devicesWithOnStatus;
 
             if (devicesWithOffStatus.length > 0) {
                 devicesToToggle = devicesWithOffStatus;
@@ -192,7 +208,7 @@ var zwaveModule = zwaveModule || {};
                     var newValue = 0;
 
                     if (!toggleToZero) {
-                        newValue = __device.maximalValue();
+                        newValue = __device.defaultOnValue();
                     }
 
                     self.setUpdateAndGetDevice(__device, newValue).done(function (__data, __textStatus, __jqXHR) {

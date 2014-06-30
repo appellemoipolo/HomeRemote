@@ -2,10 +2,10 @@
   <div class="Scene">
     {{#each ScenesList}}
     <section>
-      <button class="groupActivator" id="{{getName this}}"><i class="fa {{getIcon this}} fa-4x"></i><span>{{getName this}}</span></button>
+      <button class="groupActivator" name="{{getName this}}"><i class="fa {{getIcon this}} fa-4x"></i><span>{{getName this}}</span></button>
       <section>
         {{#each devices}}
-        <button id="{{getName this}}"><i class="fa {{getIcon this}} fa-2x"></i><span>{{getName this}}</span></button>
+        <button name="{{getName this}}"><i class="fa {{getIcon this}} fa-2x"></i><span>{{getName this}}</span></button>
         {{/each}}
       </section>
       <div class="clearfix"></div>
