@@ -65,8 +65,6 @@ var zwaveModule = zwaveModule || {};
                 self.updateAndGetDevice(__device).done(function (__data, __textStatus, __jqXHR) {
                     result.notify(__data, __textStatus, __jqXHR);
 
-                    console.log(__i);
-
                     if (__i == l - 1) {
                         result.resolve('Jobs done');
                     }

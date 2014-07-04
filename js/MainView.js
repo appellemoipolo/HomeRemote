@@ -16,6 +16,9 @@
         },
 
         events: {
+            'click; #refresh': function (__event) {
+                window.location.reload();
+            },
             'click; section .groupActivator': function (__event) {
                 setButtonClick(__event.currentTarget.name);
                 toggleGroup(__event.currentTarget.name);
@@ -32,15 +35,12 @@
         var zwave = new zwaveModule.Core(main.homeAutomationServerAddress);
 
         zwave.updateAndGetDevices(main.devices).done(function (__data) {
-            console.log('Done');
+            console.log('initDevices().updateAndGetDevices().Done()');
             console.log(__data);
         }).fail(function (__jqXHR, __textStatus, __errorThrown) {
-            console.log('Fail');
+            console.log('initDevices().updateAndGetDevices().Fail()');
             console.log(__jqXHR, __textStatus, __errorThrown);
         }).progress(function (__data, __textStatus, __jqXHR) {
-            console.log('Progress');
-            console.log(__data, __textStatus, __jqXHR);
-
             var device = main.devices.filter(function (__deviceData) {
                 // name: "devices.20.instances.0.commandClasses.38.data"
                 return __data.data.name.split('.')[1] === __deviceData.id();
