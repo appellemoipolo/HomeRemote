@@ -1,0 +1,15 @@
+{
+  "name": "appellemoipolo.HomeRemote",
+  "version": "0.0.1",
+  "description": "My personnal home remote for my needs",
+  "author": "appellemoipolo",
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-clean": "^0.5.0",
+    "grunt-contrib-copy": "^0.5.0",
+    "grunt-contrib-cssmin": "^0.10.0",
+    "grunt-contrib-uglify": "^0.5.0",
+    "grunt-shell": "^0.7.0"
+  }
+}
